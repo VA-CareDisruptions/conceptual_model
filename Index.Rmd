@@ -1,0 +1,64 @@
+---
+title: "conceptual model DCNP"
+output: html_document
+date: '2022-08-11'
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dagitty)
+```
+
+```{r}
+source('./R/dag1.R')
+
+g <- dagitty(dag1)
+
+names(g)
+
+plot(g)
+```
+
+
+Let's start with a population of 10,000 people, who have a baseline hazard of death of 2% annually (probability of death for men at 70 is 2.2%, at 75 is 3.5%, at 80 is 5.6%, at 85 is 9.5%, at 90 is 16.2% at 95 is 25.9% https://www.ssa.gov/oact/STATS/table4c6.html )
+```{r}
+p_death_year <- 0.02
+
+p_death_month <- 1 - (1-p_death_year)^(1/12)
+
+
+
+
+```
+
+Markov model:
+You can be healthy, transition to different conditions (e.g., acute cardiac, cancer, pneumonia,  ), and can be treated or not, being in each of the states affect the rate of death. Have a pre--COVID model, then have COVID as a modifier of the rates
+
+compartment 1: healthy
+
+Compartment 2a: Chronic condition in need of monitoring, in control
+Compartment 2b: Chronic condition in need of monitoring, out of control
+
+Compartment 3A: Hospitalized acute infectious issue (e.g., flu, pneumonia, NON COVID)
+
+Compartment 3B: severe COVID
+
+
+Compartment 4A: Depression other mental health (which increase risk for suicide)
+Compartment 4B: Untreated severe depression
+
+Compartment 5: DEATH
+
+3A -> 5 transition higher during disruptions?
+2A -> 2B transition higher
+4A->4B transition higher
+
+3B doesn't exist without COVID; 3B ->5 transition worse during disruption? less bad over time? 
+
+
+```{r}
+
+
+
+```
+
