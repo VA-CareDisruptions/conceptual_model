@@ -27,8 +27,30 @@ p_death_year <- 0.02
 p_death_month <- 1 - (1-p_death_year)^(1/12)
 
 
+#Probability of seeking care given emergency situation
+## probability of surviving emergency situation in hospital, delayed care
+
+#Probability of death given hospitalization for emergency condition
+
+##Probability of getting elective surgery or unnecessary care
+###probability of lethal complications given elective surgery
+
+#probability of death with in-control chronic condition
+#probability of death with out-of-control chronic conditon
+
+##Probability of detecting cancer/diabetes/hypertension if screened
+###Probability of seeking screening
+####Probability of death with or without screening
+
+#Probability of suicide attempt/succesful suicide
+
+#Probability of getting killed by violent crime
 
 
+#Probability of hospitalization/death due to a non-COVID virus
+
+##Probability of hospitalization due to covid
+###Probability of death due to COVID if hospitalized/avoided hospital
 ```
 
 Markov model:
