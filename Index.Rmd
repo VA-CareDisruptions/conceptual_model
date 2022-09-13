@@ -27,6 +27,63 @@ p_death_year <- 0.02
 p_death_month <- 1 - (1-p_death_year)^(1/12)
 
 
+```
+
+Markov model:
+You can be healthy, transition to different conditions (e.g., acute cardiac, cancer, pneumonia,  ), and can be treated or not, being in each of the states affect the rate of death. Have a pre--COVID model, then have COVID as a modifier of the rates
+
+A compartment 1: healthy (No chronic conditions)
+
+B Compartment 2a: Chronic condition in need of monitoring, in control
+C Compartment 2b: Chronic condition in need of monitoring, out of control
+
+D Compartment 3A: Hospitalized acute infectious issue (e.g., flu, pneumonia, NON COVID)
+
+E Compartment 3B: severe COVID
+
+
+F Compartment 4A: Treated depression other mental health (which increase risk for suicide)
+
+G Compartment 4B: Untreated severe depression
+
+Z Compartment 5: DEATH
+
+(To assign):
+Acute health event (e.g., MI, stroke)
+
+
+Transition probabilities (age specific)
+p1 A,B,F -> Z (baseline death rates not acute infections or acute chronic conditions or mental)
+p2 B -> C (loss of control of chronic conditions)
+p3 C -> B (regain control of chronic conditions)
+p4 C -> Z (death from uncontrolled chronic conditions)
+
+p5 A,B,C,F,G -> D (probably separate out for each)
+
+p6 A,B,C,F,G -> E (probably separate out for each)
+
+p7 A -> F
+p8 A -> G
+p9 F -> G
+
+p10 G -> Z
+p11 A,B,F -> Z
+
+Many of the probabilities should be a function of COVID/ hospital rates, etc.
+
+3A -> 5 transition higher during disruptions?
+2A -> 2B transition higher
+4A->4B transition higher
+
+3B doesn't exist without COVID; 3B ->5 transition worse during disruption? less bad over time? 
+
+some possible transitions
+
+
+
+
+```{r}
+
 #Probability of seeking care given emergency situation
 ## probability of surviving emergency situation in hospital, delayed care
 
@@ -51,36 +108,6 @@ p_death_month <- 1 - (1-p_death_year)^(1/12)
 
 ##Probability of hospitalization due to covid
 ###Probability of death due to COVID if hospitalized/avoided hospital
-```
-
-Markov model:
-You can be healthy, transition to different conditions (e.g., acute cardiac, cancer, pneumonia,  ), and can be treated or not, being in each of the states affect the rate of death. Have a pre--COVID model, then have COVID as a modifier of the rates
-
-compartment 1: healthy
-
-Compartment 2a: Chronic condition in need of monitoring, in control
-Compartment 2b: Chronic condition in need of monitoring, out of control
-
-Compartment 3A: Hospitalized acute infectious issue (e.g., flu, pneumonia, NON COVID)
-
-Compartment 3B: severe COVID
-
-
-Compartment 4A: Depression other mental health (which increase risk for suicide)
-Compartment 4B: Untreated severe depression
-
-Compartment 5: DEATH
-
-3A -> 5 transition higher during disruptions?
-2A -> 2B transition higher
-4A->4B transition higher
-
-3B doesn't exist without COVID; 3B ->5 transition worse during disruption? less bad over time? 
-
-
-```{r}
-
-
 
 ```
 
