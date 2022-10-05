@@ -116,3 +116,94 @@ some possible transitions
 
 ```
 
+## Blood pressure
+
+less frequent monitoring associated with loss of control; more frequent monitoring associated with regaining control
+
+frequency of monitoring is time varying and depends on pandemic, and maybe on state of the outcome (check about this)..Multistate model (might not be Markov model because outcome might depend on previous states)
+
+some refs:
+ahajournals.org/doi/10.1161/JAHA.120.016174
+
+
+first a simple 2 state model, where monitoring is uniform
+```{r}
+t <- 365*10
+
+N <-100000
+
+P_1_2 <- 1/(365*4)
+  
+P_2_1 <- 1/(365/2)
+  
+RR_1_2_freq <- 1.2 # effect of less frequent monitoring on P_1_2
+
+RR_2_1_freq <- 1/0.8 # effect of more frequent monitoring on P_2_1
+
+#State 1: In Control hypertension; State 2: Out of control 
+
+State1 <- rep(NA, t)
+
+State2 <- rep(NA, t)
+
+State1[1] <- 30000
+  
+State2[1] <- N - State1[1]
+
+for(i in 2:t){
+  State1[i] <- State1[i-1] - State1[i-1]*P_1_2 + State2[i-1]*P_2_1
+  State2[i] <- State2[i-1] - State2[i-1]*P_2_1 +State1[i-1]*P_1_2
+}
+
+plot(State1, type='l')
+plot(State2, type='l')
+  
+
+```
+Have 2 populations with 2 states each:
+frequent screen, less frequent; in control, out of control
+
+```{r}
+
+t <- 365*10
+
+N <-100000
+
+P_1_2 <- 1/(365*4)
+  
+P_2_1 <- 1/(365/2)
+  
+RR_1_2_freq <- 1.2 # effect of less frequent monitoring on P_1_2
+
+RR_2_1_freq <- 1/0.8 # effect of more frequent monitoring on P_2_1
+
+#State 1: In Control hypertension; State 2: Out of control 
+
+State1_infreq <- rep(NA, t)
+
+State2_infreq <- rep(NA, t)
+
+State1_freq <- rep(NA, t)
+
+State2_freq <- rep(NA, t)
+
+#infrequent monitoring
+State1_infreq[1] <- 2000
+  
+State2_infreq[1] <- 5000
+
+#frequent monitoring
+State1_freq[1] <- 10000
+  
+State2_freq[1] <- N - State1_infreq[1] -State2_infreq[1] -State1_freq[1]
+
+#need to think about the transitions here--if out of control, might shift to more frequent monitoring.
+
+for(i in 2:t){
+  State1[i] <- State1[i-1] - State1[i-1]*P_1_2 + State2[i-1]*P_2_1
+  
+  State2[i] <- State2[i-1] - State2[i-1]*P_2_1 +State1[i-1]*P_1_2
+}
+
+```
+
