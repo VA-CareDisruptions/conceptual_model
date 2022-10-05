@@ -196,7 +196,7 @@ Note these Probabilities might not be right
 
 ```{r}
 
-t <- 365*100
+t <- 365*100  #100 year simulation period
 
 
 #Main transitions..cumulative probabilities over a 2 year period. calculate daily prob as 
@@ -218,12 +218,13 @@ cum_P_4_2 = 0 #Prob of out of control infrequent monitoring to out of control fr
 
 cum_P_4_1 = 0 #Prob of out of control infrequent monitoring to in control frequent monitoring
 
-cum_P_1_4 <- 0
+cum_P_1_4 <- 0 #prob of in control frequent to out of conrol infrequent
 
-cum_P_2_3 <- 0
-cum_P_2_4 <- 0
+cum_P_2_3 <- 0 #prob of out of control frequent to in control, infrequent
 
-cum_P_3_2 <- 0
+cum_P_2_4 <- 0 #prob of out of control frequnt to out of control infrequent
+
+cum_P_3_2 <- 0 #prob of in control infrequnt to out of control frequent.
 
 
 #Convert cumulative to daily prob:
