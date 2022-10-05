@@ -160,50 +160,137 @@ plot(State2, type='l')
   
 
 ```
+
+
 Have 2 populations with 2 states each:
 frequent screen, less frequent; in control, out of control
 
+CK: The recommendation for blood pressure measurement changes according to HTN control – those with uncontrolled HTN should be monitored every 4-6 weeks, and those with controlled HTN every 6 months (some would say 3-6). I would think if we make 4 states like you describe there could me movement between any two – e.g., someone has controlled HTN and is monitored frequently [state 1], and then they have a lapse in monitoring and become uncontrolled [state 4].
+
+
+4 states:
+ incontrol_freq_1
+ outcontrol_freq_2
+ incontrol_infreq_3
+ outcontrol_infreq_4
+ 
+ All transitions are possible
+ 
+
+popsizes: 
+Table2 495k people :In control BP: 79808 had readings <2months; 20554 at 3 months, 106028 4-7 months( 91-210 days); 289031 had readings more than 7 months apart; unadjusted RR for >7 months ranged from 1.07-1.12 (RR1); for adjusted: 1.05-1.09, RR for 3-7 was ~1; rr for 0-1months was <1 for developing hypertension (transitions from 3-4)
+
+table 3;  1.1 million people: start out of control, if monitor every 30-210 days (1-7 months) RR=0.88-0.91 to be less likely to reduce BP compared to those that monitor monthly; if >7 months, RR=0.79-0.84 to reduce BP.
+
+
+Note these Probabilities might not be right
+
+56% of those with controlled HT became uncontrolled at first pandemic reading (P_3_4=0.56)
+--P_1_2 = P_3_4*(1/1.10)
+
+20.7% of those with uncontrolled HT became controlled  (P_2_1 = 0.21) 
+--P_4_3 = P_2_1*0.8
+
+
+
+
 ```{r}
 
-t <- 365*10
+t <- 365*100
 
-N <-100000
 
-P_1_2 <- 1/(365*4)
-  
-P_2_1 <- 1/(365/2)
-  
-RR_1_2_freq <- 1.2 # effect of less frequent monitoring on P_1_2
+#Main transitions..cumulative probabilities over a 2 year period. calculate daily prob as 
+#1 - exp(log(1-cum_prob)/t)
 
-RR_2_1_freq <- 1/0.8 # effect of more frequent monitoring on P_2_1
+cum_P_3_4=0.56 #Prob going from in control to out of control with infrequent monitoring
 
-#State 1: In Control hypertension; State 2: Out of control 
+cum_P_1_2 = P_3_4*(1/1.10) #Prob going from in control to out of control with frequent monitoring
 
-State1_infreq <- rep(NA, t)
+cum_P_2_1 = 0.21 #Prob going from out of control to in control with frequent monitoring
 
-State2_infreq <- rep(NA, t)
+cum_P_4_3 = P_2_1*0.8  #Prob going from out of control to in control with infrequent monitoring
 
-State1_freq <- rep(NA, t)
+cum_P_1_3 = 0.3 #Prob of in control frequent monitoring to in control infrequent monitoring
 
-State2_freq <- rep(NA, t)
+cum_P_3_1 = 0.2 #Prob of in control infrequent monitoring to in control frequent monitoring
 
-#infrequent monitoring
-State1_infreq[1] <- 2000
-  
-State2_infreq[1] <- 5000
+cum_P_4_2 = 0 #Prob of out of control infrequent monitoring to out of control frequent monitoring
 
-#frequent monitoring
-State1_freq[1] <- 10000
-  
-State2_freq[1] <- N - State1_infreq[1] -State2_infreq[1] -State1_freq[1]
+cum_P_4_1 = 0 #Prob of out of control infrequent monitoring to in control frequent monitoring
 
-#need to think about the transitions here--if out of control, might shift to more frequent monitoring.
+cum_P_1_4 <- 0
+
+cum_P_2_3 <- 0
+cum_P_2_4 <- 0
+
+cum_P_3_2 <- 0
+
+
+#Convert cumulative to daily prob:
+P_1_2 = 1 - exp(log(1-cum_P_1_2)/(365*2))
+
+P_1_3 = 1 - exp(log(1-cum_P_1_3)/(365*2))
+
+P_1_4 = 1 - exp(log(1-cum_P_1_4)/(365*2))
+
+P_2_1 = 1 - exp(log(1-cum_P_2_1)/(365*2))
+
+P_2_3 = 1 - exp(log(1-cum_P_2_3)/(365*2))
+P_2_4 = 1 - exp(log(1-cum_P_2_4)/(365*2))
+
+P_3_1 = 1 - exp(log(1-cum_P_3_1)/(365*2))
+P_3_2 = 1 - exp(log(1-cum_P_3_2)/(365*2))
+P_3_4 = 1 - exp(log(1-cum_P_3_4)/(365*2))
+
+P_4_1 = 1 - exp(log(1-cum_P_4_1)/(365*2))
+
+P_4_2 = 1 - exp(log(1-cum_P_4_2)/(365*2))
+
+P_4_3 = 1 - exp(log(1-cum_P_4_3)/(365*2))
+
+
+
+
+#Frequent monitoring: State 1: In Control hypertension; State 2: Out of control 
+
+State1 <- rep(NA, t)
+
+State2 <- rep(NA, t)
+
+State3 <- rep(NA, t)
+
+State4 <- rep(NA, t)
+
+#frequent monitoring, in control
+State1[1] <- 79808 + 20554
+
+#frequent monitoring, out of control
+State2[1] <- 500000
+
+
+#infrequent monitoring, in control 
+State3[1] <- 495000 - State1[1]
+
+#infrequent monitoring, out of control
+State4[1] <- 1.1e6 - State2[1]
+
+
 
 for(i in 2:t){
-  State1[i] <- State1[i-1] - State1[i-1]*P_1_2 + State2[i-1]*P_2_1
+  State1[i] <- State1[i-1] - State1[i-1]*(P_1_2 + P_1_3 + P_1_4) + State2[i-1]*P_2_1 + State3[i-1]*(P_3_1) + + State4[i-1]*(P_4_1)
   
-  State2[i] <- State2[i-1] - State2[i-1]*P_2_1 +State1[i-1]*P_1_2
+  State2[i] <- State2[i-1] - State2[i-1]*(P_2_1+P_2_3+P_2_4) +State1[i-1]*P_1_2 +State3[i-1]*P_3_2 +State4[i-1]*P_4_2
+
+  State3[i] <- State3[i-1] - State3[i-1]*( P_3_1 + P_3_2 + P_3_4 ) +  State1[i-1]*P_1_3 + State2[i-1]*P_2_3 + State4[i-1]*P_4_3 
+
+  State4[i] <- State4[i-1] - State4[i-1]*(P_4_1 + P_4_2 + P_4_3) +State1[i-1]*P_1_4 + +State2[i-1]*P_2_4 + State3[i-1]*P_3_4
+  
 }
+
+plot(State1)
+plot(State2)
+plot(State3)
+plot(State4)
 
 ```
 
