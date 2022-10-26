@@ -192,27 +192,27 @@ Note these Probabilities might not be right
 --P_4_3 = P_2_1*0.8
 
 
-
+use approach of Kissler and grad to convert prob to rate and back when calculatin excess
 
 ```{r}
 
-t <- 365*100  #100 year simulation period
+t <- 365*500  #100 year simulation period
 
 
 #Main transitions..cumulative probabilities over a 2 year period. calculate daily prob as 
 #1 - exp(log(1-cum_prob)/t)
 
-cum_P_3_4=0.56 #Prob going from in control to out of control with infrequent monitoring
+cum_P_3_4=0.54 #Prob going from in control to out of control with infrequent monitoring
 
-cum_P_1_2 = P_3_4*(1/1.10) #Prob going from in control to out of control with frequent monitoring
+cum_P_1_2 = 1 - (1-cum_P_3_4)^(1/1.10) #Prob going from in control to out of control with frequent monitoring
 
 cum_P_2_1 = 0.21 #Prob going from out of control to in control with frequent monitoring
 
-cum_P_4_3 = P_2_1*0.8  #Prob going from out of control to in control with infrequent monitoring
+cum_P_4_3 = 1 - (1-cum_P_2_1)^0.8  #Prob going from out of control to in control with infrequent monitoring
 
-cum_P_1_3 = 0.3 #Prob of in control frequent monitoring to in control infrequent monitoring
+cum_P_1_3 = 0.2 #Prob of in control frequent monitoring to in control infrequent monitoring
 
-cum_P_3_1 = 0.2 #Prob of in control infrequent monitoring to in control frequent monitoring
+cum_P_3_1 = 0.3 #Prob of in control infrequent monitoring to in control frequent monitoring
 
 cum_P_4_2 = 0 #Prob of out of control infrequent monitoring to out of control frequent monitoring
 
@@ -288,7 +288,7 @@ for(i in 2:t){
   
 }
 
-plot(State1)
+plot(State1[-c(1:50000)])
 plot(State2)
 plot(State3)
 plot(State4)
